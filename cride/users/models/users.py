@@ -21,7 +21,6 @@ class User(CRideModel,AbstractUser):
             'unique' : 'A user with tha email already exise.'
          }
     )
-
     phone_regex = RegexValidator(
          regex = r'\+?1?\d{9,15}$',
          message = "Phone number must be entered in the format: +9999999. up to 15 digits allowed."
@@ -40,7 +39,7 @@ class User(CRideModel,AbstractUser):
              'Clients are the main type of user.'
          )
     )
-    is_vefied = models.BooleanField(
+    is_verified = models.BooleanField(
          'verified',
          default=True,
          help_text = 'Set to true when the user have verified its email adress'
