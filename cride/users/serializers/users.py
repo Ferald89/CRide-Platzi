@@ -1,9 +1,11 @@
 """User serializers. """
 #Django 
+from django.conf import settings
 from django.contrib.auth import authenticate, password_validation
 from django.core.validators import RegexValidator
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 #Django REST Framework
 from rest_framework import serializers
@@ -12,6 +14,11 @@ from rest_framework.validators import UniqueValidator
 
 #Models
 from cride.users.models import User,Profile
+
+#utilities
+from datetime import timedelta
+import jwt
+
 
 class UserModelSerializer(serializers.ModelSerializer):
   """User model serializer."""
@@ -87,7 +94,14 @@ class UserSignUpSerializer(serializers.Serializer):
 
   def gen_verification_token(self,user):
     """Create JWT token tha the user can use to verify its account."""
-    return 'abc'
+    exp_date = timezone.now() + timedelta(days=3)
+    payload={
+      'user':user.username,
+      'exp':int(exp_date.timestamp()),
+      'type' : 'email_confirmation'
+    }
+    token = jwt.encode(payload,settings.SECRET_KEY,algorithm='HS256')
+    return token.decode()
 
 class UserLoginSerializer(serializers.Serializer):
   """User login serializer.
@@ -113,3 +127,26 @@ class UserLoginSerializer(serializers.Serializer):
     """Generate or retriev new token"""
     token, created = Token.objects.get_or_create(user = self.context['user'] )
     return self.context['user'], token.key
+
+class AccountVerificationSerializer(serializers.Serializer):
+  """Account verification serializer."""
+  token =  serializers.CharField()
+  def validate_token(self,data):
+    """Verify token is vaild."""
+    try:
+      payload = jwt.decode(data, settings.SECRET_KEY,algorithms=['HS256'])
+    except jwt.ExpiredSignatureError:
+      raise serializers.ValidationError('verification link has expired.')
+    except jwt.PyJWTError:
+      raise serializers.ValidationError('Invalid token')
+    if payload['type'] != 'email_confirmation':
+        raise serializers.ValidationError('Invalid token')
+    self.context['payload']= payload
+    return data
+
+  def save(self):
+      """Update user's verified status."""
+      payload = self.context['payload']
+      user = User.objects.get(username=payload['user'])
+      user.is_verified = True
+      user.save()
