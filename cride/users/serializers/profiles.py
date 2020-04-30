@@ -14,16 +14,15 @@ class ProfileModelSerializer(serializers.ModelSerializer):
   class Meta:
     """Meta Class."""
     model = Profile
-    
-    fileds = (
+    fields = (
       'picture',
       'biography',
       'rides_taken',
       'rides_offered',
-      'reputation'
-    )
-    read_only_fields=(
+      'reputation')
+      
+    read_only_fields = (
       'rides_taken',
       'rides_offered',
       'reputation'
-    )
+       )

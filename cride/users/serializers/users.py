@@ -25,8 +25,7 @@ import jwt
 
 class UserModelSerializer(serializers.ModelSerializer):
   """User model serializer."""
-  #Esta parte hay que revisarla
-  #profile = ProfileModelSerializer(read_only=True)
+  profile = ProfileModelSerializer(read_only=True)
 
   class Meta:
     """Meta class."""

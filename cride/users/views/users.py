@@ -13,6 +13,7 @@ from rest_framework.permissions import (
 from cride.users.permissions import IsAccountOwner
 
 # Serializer
+from cride.users.serializers.profiles import ProfileModelSerializer 
 from cride.circles.serializers import CircleModelSerializer
 from cride.users.serializers import (
     AccountVerificationSerializer,
