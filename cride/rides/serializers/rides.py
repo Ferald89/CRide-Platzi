@@ -16,30 +16,30 @@ from datetime import timedelta
 from django.utils import timezone
 
 class RideModelSerializer(serializers.ModelSerializer):
-  """Ride model serializer."""
+    """Ride model serializer."""
 
-  offered_by = UserModelSerializer(read_only=True)
-  offered_in = serializers.StringRelatedField()
+    offered_by = UserModelSerializer(read_only=True)
+    offered_in = serializers.StringRelatedField()
 
-  passengers = UserModelSerializer(read_only=True, many=True)
+    passengers = UserModelSerializer(read_only=True, many=True)
 
-  class Meta:
-    """Meta class."""
+    class Meta:
+        """Meta class."""
 
-    model = Ride
-    fields = '__all__'
-    read_only_fields = (
-      'offered_by',
-      'offered_in',
-      'rating'
-    )
+        model = Ride
+        fields = '__all__'
+        read_only_fields = (
+        'offered_by',
+        'offered_in',
+        'rating'
+        )
 
-  def upadate(self,instance,data):
-    """Allow updates only before departure date. """
-    now = timezone.now()
-    if instance.departure_date <= now:
-      raise serializers.ValidationError('Ongoin rides cannot be modified')
-    return super(RideModelSerializer, self).update(instance, data)
+    def upadate(self,instance,data):
+        """Allow updates only before departure date. """
+        now = timezone.now()
+        if instance.departure_date <= now:
+            raise serializers.ValidationError('Ongoin rides cannot be modified')
+        return super(RideModelSerializer, self).update(instance, data)
 
 
 class CreateRideSerializer(serializers.ModelSerializer):
@@ -186,3 +186,22 @@ class JoinRideSerializer(serializers.ModelSerializer):
 
     return ride
 
+
+class EndRideSerializer(serializers.ModelSerializer):
+  """End ride serializer."""
+
+  current_time = serializers.DateTimeField()
+
+  class Meta:
+    """Meta class."""
+
+    model = Ride
+    fields = ('is_active','current_time')
+
+  def validate_current_time(self,data):
+    """verify ride have indeed started."""
+    ride = self.context['view'].get_object()
+    # import ipdb; ipdb.set_trace()
+    if data <= ride.departure_date:
+      raise serializers.ValidationError('Ride has not started yet')
+    return data

@@ -9,3 +9,10 @@ class IsRideOwner(BasePermission):
   def has_object_permission(self,request,view,obj):
     """Verify requestering user is the ride creator."""
     return request.user == obj.offered_by
+
+class IsNotRideOwner(BasePermission):
+  """Verify teqestin user is not ride create. """
+  def has_object_permission(self,request,view,obj):
+    """Verify requestering user is the ride creator."""
+    return not request.user == obj.offered_by
+    # return True

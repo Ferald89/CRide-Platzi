@@ -1,7 +1,8 @@
 """Circles.app."""
 
-#Django
+# Django
 from django.apps import AppConfig
+
 
 class CirclesAppConfig(AppConfig):
     """Users app config"""
