@@ -3,26 +3,26 @@
 # Django REST Framework
 from rest_framework import serializers
 
-
-#Models
+# Models
 from cride.users.models import Profile
 
 
 class ProfileModelSerializer(serializers.ModelSerializer):
-  """Profile Model Serializer. """
+    """Profile Model Serializer. """
 
-  class Meta:
-    """Meta Class."""
-    model = Profile
-    fields = (
-      'picture',
-      'biography',
-      'rides_taken',
-      'rides_offered',
-      'reputation')
-      
-    read_only_fields = (
-      'rides_taken',
-      'rides_offered',
-      'reputation'
-       )
+    class Meta:
+        """Meta Class."""
+        model = Profile
+        fields = (
+                'picture',
+                'biography',
+                'rides_taken',
+                'rides_offered',
+                'reputation'
+                )
+
+        read_only_fields = (
+                      'rides_taken',
+                      'rides_offered',
+                      'reputation'
+                      )

@@ -53,7 +53,7 @@ def send_confirmation_email(user_pk):
     msg.send()
 
 
-@periodic_task(name='disable_finished_rides', run_every=timedelta(seconds=5))
+@periodic_task(name='disable_finished_rides', run_every=timedelta(seconds=10))
 def disable_finished_rides():
     """Disable finished rides. """
     now = timezone.now()
@@ -61,7 +61,7 @@ def disable_finished_rides():
 
     # Update rides that have already finished
     rides = Ride.objects.filter(
-            arrival_date__gtte=now,
+            arrival_date__gte=now,
             arrival_date__lte=offset,
             is_active=True
             )
